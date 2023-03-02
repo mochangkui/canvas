@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title></title>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <canvas id="canvas" width="500" height="500" style="border:1px solid silver;"></canvas>
+
+    <script type="text/javascript">
+      window.onload = function() {
+        var canvas = document.getElementById('canvas')
+        var ctx = canvas.getContext("2d")
+
+        var x = 20
+        var y = 20
+        var r = 20
+        var speed = 10
+
+        function drawArc (x, y) {
+          ctx.beginPath()
+          ctx.arc(x, y, r, 0, Math.PI * 2)
+          ctx.fillStyle = "#0000ff"
+          ctx.fill()
+        }
+
+        drawArc(x, y)
+
+        //添加键盘事件
+        window.addEventListener("keydown", function (e) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          switch (String(e.keyCode)) {
+            case "38":
+              // up
+              y -= speed
+              checkBorder()
+              drawArc(x, y)
+              break
+            case "37":
+              // left
+              x -= speed
+              checkBorder()
+              drawArc(x, y)
+              break
+            case "39":
+              // right
+              x += speed
+              checkBorder()
+              drawArc(x, y)
+              break
+            case "40":
+              // down
+              y += speed
+              checkBorder()
+              drawArc(x, y)
+              break
+            default:
+              drawArc(x, y)
+            }
+          },
+          false
+        )
+
+        //定义边界检测函数
+        function checkBorder() {
+          if (y < r) {
+            //当小球碰到上边界时
+            y = r
+          } else if (y > canvas.height - r) {
+            //当小球碰到下边界时
+            y = canvas.height - r
+          }
+
+          if (x < r) {
+            //当小球碰到左边界时
+            x = r
+          } else if (x > canvas.width - r) {
+            //当小球碰到右边界时
+            x = canvas.width - r
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

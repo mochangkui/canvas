@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <canvas id="canvas" width="500" height="500" style="border: solid 1px #999;"></canvas>
+
+  <script>
+    class Ball {
+      constructor (x, y, r, color) {
+        this.x = x || 10
+        this.y = y || 10
+        this.r = r || 10
+        this.color = color || null
+      }
+    }
+
+    // 检测碰撞
+    function checkTouch (circleB, circleA) {
+      var dx = circleB.x - circleA.x;
+      var dy = circleB.y - circleA.y;
+      var distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance < (circleA.r + circleB.r)) {
+        return true
+      }
+      else {
+        return false
+      }
+    }
+
+    
+    const canvas = document.getElementById('canvas')
+    const ctx = canvas.getContext('2d')
+    
+    // 定义两个小球：ballA和ballB
+    var ballA = new Ball(20, canvas.height / 2, 20, "#FF6699");
+    var ballB = new Ball(canvas.width - 20, canvas.height / 2, 20, "#66CCFF");
+    // 定义小球x轴速度
+    var vx = 2
+
+    ;(function frame () {
+      window.requestAnimationFrame(frame)
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      // ballA
+      ctx.beginPath()
+      ballA.x += vx
+      ctx.arc(ballA.x, ballA.y, ballA.r, 0, Math.PI * 2)
+      ctx.fillStyle = ballA.color
+      ctx.fill()
+
+      // ballB
+      ctx.beginPath()
+      ballB.x -= vx
+      ctx.arc(ballB.x, ballB.y, ballB.r, 0, Math.PI * 2)
+      ctx.fillStyle = ballB.color
+      ctx.fill()
+
+      // 边界检测
+      // 碰到左边界 碰到右边界
+      if (ballA.x < ballA.r || ballB.x > canvas.width - ballB.r) {
+        vx = -vx
+      }
+
+      // 碰撞检测
+      if (checkTouch(ballB, ballA)) {
+        vx = -vx
+      }
+    })()
+  </script>
+</body>
+</html>

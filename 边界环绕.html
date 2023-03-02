@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title></title>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <canvas id="canvas" width="300" height="300" style="border:1px solid silver;"></canvas>
+
+    <script type="text/javascript">
+      window.onload = function() {
+        var canvas = document.getElementById('canvas')
+        var ctx = canvas.getContext("2d")
+
+        var x = 20
+        var y = 20
+        var r = 20
+        var speed = 2 // 移动速度
+        var dir = 39 // 方向
+
+        // 画圆
+        function drawArc (x, y) {
+          ctx.beginPath()
+          ctx.arc(x, y, r, 0, Math.PI * 2)
+          ctx.fillStyle = "#0000ff"
+          ctx.fill()
+        }
+
+        // 小球运动的方向
+        function sportDirection () {
+          window.requestAnimationFrame(sportDirection)
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          switch (String(dir)) {
+            case "37":
+              // left
+              x -= speed
+              drawArc(x, y)
+              if (x <= -r) {
+                x = canvas.width + r
+              }
+              break
+            case "38":
+              // up
+              y -= speed
+              drawArc(x, y)
+              if (y <= -r) {
+                y = canvas.height + r
+              }
+              break
+            case "39":
+              // right
+              x += speed
+              drawArc(x, y)
+              if (x > canvas.width + r) {
+                x = -2 * r
+              }
+              break
+            case "40":
+              // down
+              y += speed
+              drawArc(x, y)
+              if (y > canvas.height + r) {
+                y = -r
+              }
+            default: 
+              drawArc(x, y)
+          }
+        }
+        sportDirection()
+
+        window.addEventListener("keydown", function (e) {
+          dir = e.keyCode
+        })
+      }
+    </script>
+  </body>
+</html>
