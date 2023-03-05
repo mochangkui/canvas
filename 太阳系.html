@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title></title>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <canvas id="canvas" width="300" height="300" style="border:1px solid silver;"></canvas>
+
+    <script type="text/javascript">
+      window.onload = function () {
+        let canvasEl = document.getElementById("canvas")
+        if (!canvasEl.getContext) {
+          return;
+        }
+        let ctx = canvasEl.getContext("2d") // 2d | webgl
+
+        let sun = new Image()
+        sun.src = "https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/640b4df0a5074e9a9bf4777fdf1fd74e~tplv-k3u1fbpfcp-watermark.image"
+        let earth = new Image()
+        earth.src = "https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f4ad71733e934b818a52bcfea56a683f~tplv-k3u1fbpfcp-watermark.image"
+        let moon = new Image()
+        moon.src = "https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/05bc3992bd5044448f029b7d68049b38~tplv-k3u1fbpfcp-watermark.image"
+
+        draw()
+
+        /**
+          1秒钟会回调 61次
+        */
+        function draw() {
+          ctx.clearRect(0, 0, 300, 300)
+          // 1.绘制太阳
+          drawSun()
+          // 2.绘制地球
+          drawEarth()
+
+          requestAnimationFrame(draw)
+        }
+
+        function drawSun() {
+          ctx.save() // (0, 0)
+          ctx.drawImage(sun, 0, 0)
+          ctx.translate(150, 150)
+          // 绘制地球运动轨迹
+          ctx.beginPath()
+          ctx.arc(0, 0, 105, 0, Math.PI * 2)
+          ctx.closePath()
+          ctx.strokeStyle = "rgba(0, 153, 255, 0.4)"
+          ctx.stroke()
+          ctx.restore()
+        }
+
+        function drawEarth() {
+          let time = new Date()
+          let second = time.getSeconds()
+          let milliseconds = time.getMilliseconds()
+
+          ctx.save()
+          ctx.translate(150, 150)
+          // 地球的旋转
+          // Math.PI * 2  一整个圆的弧度
+          // Math.PI * 2 / 60   分成 60 份
+          // Math.PI * 2 / 60   1s
+          // Math.PI * 2 / 60 / 1000    1mm
+
+          // 1s 1mm
+          // Math.PI * 2 / 60 * second + Math.PI * 2 / 60 / 1000 * milliseconds
+          ctx.rotate(((Math.PI * 2) / 60) * second + ((Math.PI * 2) / 60 / 1000) * milliseconds)
+          ctx.translate(105, 0)
+          ctx.drawImage(earth, -12, -12)
+          // 绘制月球
+          drawMoon(second, milliseconds)
+
+          ctx.restore()
+        }
+
+        function drawMoon (second, milliseconds) {
+          ctx.save()
+          ctx.rotate(((Math.PI * 2) / 10) * second + ((Math.PI * 2) / 10 / 1000) * milliseconds)
+          ctx.translate(0, 28)
+          ctx.drawImage(moon, -3.5, -3.5)
+          ctx.restore()
+        }
+      }
+    </script>
+  </body>
+</html>
