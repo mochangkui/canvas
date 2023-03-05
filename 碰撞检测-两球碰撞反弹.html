@@ -21,10 +21,8 @@
 
     // 检测碰撞
     function checkTouch (circleB, circleA) {
-      var dx = circleB.x - circleA.x;
-      var dy = circleB.y - circleA.y;
-      var distance = Math.sqrt(dx * dx + dy * dy);
-      if (distance < (circleA.r + circleB.r)) {
+      var dx = circleB.x - circleA.x
+      if (dx < (circleA.r + circleB.r)) {
         return true
       }
       else {
@@ -60,8 +58,12 @@
       ctx.fill()
 
       // 边界检测
-      // 碰到左边界 碰到右边界
-      if (ballA.x < ballA.r || ballB.x > canvas.width - ballB.r) {
+      // ballA碰到左边界 碰到右边界
+      if (ballA.x < ballA.r) {
+        vx = -vx
+      }
+      // ballB 碰到右边界
+      if (ballB.x > canvas.width - ballB.r) {
         vx = -vx
       }
 

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title></title>
+    <meta charset="utf-8" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      #canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <img src="./images/animal.jpg" alt="">
+    <canvas id="canvas" width="300" height="300" style="border:1px solid silver;"></canvas>
+
+    <script type="text/javascript">
+      const canvas = document.getElementById('canvas')
+      const ctx = canvas.getContext('2d')
+
+      ctx.fillStyle = 'gray'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+      canvas.onmousedown = function (e) {
+        ctx.beginPath()
+        ctx.lineWidth = 20
+        ctx.lineCap = 'round'
+        ctx.globalCompositeOperation = 'destination-out'
+        const ev = e || window.event
+        const x = ev.clientX
+        const y = ev.clientY
+        moveTo(x, y)
+
+        canvas.onmousemove = function (e) {
+          const ev = e || window.event
+          const x = ev.clientX
+          const y = ev.clientY
+          ctx.lineTo(x, y)
+          ctx.closePath()
+          ctx.stroke()
+        }
+
+        canvas.onmouseup = function () {
+          canvas.onmousemove = null
+        }
+      }
+    </script>
+  </body>
+</html>

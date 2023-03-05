@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title></title>
+    <meta charset="utf-8" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      #canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" width="510" height="382" style="border:1px solid silver;"></canvas>
+
+    <script type="text/javascript">
+      const canvas = document.getElementById('canvas')
+      const ctx = canvas.getContext('2d')
+
+      const bgImg = new Image()
+      bgImg.src = './images/dance.jpg'
+
+      let x = 0
+      // 使用translate
+      function bgMove () {
+        ctx.save()
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        ++x
+        ctx.translate(-x, 0)
+        ctx.drawImage(bgImg, 0, 0)
+        ctx.drawImage(bgImg, canvas.width, 0)
+        if (x >= canvas.width) {
+          x = 0
+        }
+        ctx.restore()
+        requestAnimationFrame(bgMove)
+      }
+      // 不使用translate
+      function bgMove1 () {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        ++x
+        ctx.drawImage(bgImg, -x, 0)
+        ctx.drawImage(bgImg, canvas.width - x, 0)
+        if (x >= canvas.width) {
+          x = 0
+        }
+        requestAnimationFrame(bgMove)
+      }
+
+      bgImg.onload = function () {
+        ctx.drawImage(bgImg, 0, 0)
+        // bgMove()
+        bgMove1()
+      }
+    </script>
+  </body>
+</html>
