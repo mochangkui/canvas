@@ -57,14 +57,6 @@
 
           ctx.save()
           ctx.translate(150, 150)
-          // 地球的旋转
-          // Math.PI * 2  一整个圆的弧度
-          // Math.PI * 2 / 60   分成 60 份
-          // Math.PI * 2 / 60   1s
-          // Math.PI * 2 / 60 / 1000    1mm
-
-          // 1s 1mm
-          // Math.PI * 2 / 60 * second + Math.PI * 2 / 60 / 1000 * milliseconds
           ctx.rotate(((Math.PI * 2) / 60) * second + ((Math.PI * 2) / 60 / 1000) * milliseconds)
           ctx.translate(105, 0)
           ctx.drawImage(earth, -12, -12)

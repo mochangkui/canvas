@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
   </head>
   <body>
-    <canvas id="canvas" width="300" height="300" style="border:1px solid silver;"></canvas>
+    <canvas id="canvas" width="300" height="300" style="border: 1px solid silver;"></canvas>
 
     <script type="text/javascript">
       init()
@@ -15,9 +15,10 @@
         let ctx = canvas.getContext("2d")
         draw(ctx)
       }
-        
+      
       function draw (ctx) {
         requestAnimationFrame(function step () {
+          ctx.clearRect(0, 0, 300, 300) // 清除所有内容
           drawDial(ctx) // 绘制表盘
           drawAllHands(ctx) // 绘制时分秒针
           requestAnimationFrame(step)
@@ -27,66 +28,86 @@
       function drawAllHands (ctx) {
         let time = new Date()
       
-        let s = time.getSeconds()
-        let m = time.getMinutes()
-        let h = time.getHours()
+        let s = time.getSeconds() // 秒
+        let m = time.getMinutes() // 分
+        let h = time.getHours() // 时
       
         let pi = Math.PI
-        let secondAngle = pi / 180 * 6 * s  //计算出来s针的弧度
-        let minuteAngle = pi / 180 * 6 * m + secondAngle / 60  //计算出来分针的弧度
-        let hourAngle = pi / 180 * 30 * h + minuteAngle / 12  //计算出来时针的弧度
+        let secondAngle = pi * 2 / 60 * s // 计算出来秒针的弧度
+        let minuteAngle = pi * 2 / 60 * m + secondAngle / 60 // 计算出来分针的弧度
+        let hourAngle = pi * 2 / 12 * h + minuteAngle / 12 // 计算出来时针的弧度
       
-        drawHand(hourAngle, 60, 6, "red", ctx)  //绘制时针
-        drawHand(minuteAngle, 106, 4, "green", ctx)  //绘制分针
-        drawHand(secondAngle, 129, 2, "blue", ctx)  //绘制秒针
+        drawHand(hourAngle, 60, 6, "red", ctx) // 绘制时针
+        drawHand(minuteAngle, 106, 4, "green", ctx) // 绘制分针
+        drawHand(secondAngle, 129, 2, "blue", ctx) // 绘制秒针
       }
-      /*绘制时针、或分针、或秒针
+      /**
+        * 绘制时针、或分针、或秒针
         * 参数1：要绘制的针的角度
         * 参数2：要绘制的针的长度
         * 参数3：要绘制的针的宽度
         * 参数4：要绘制的针的颜色
-        * 参数4：ctx
-        * */
+        * 参数5：ctx
+        */
       function drawHand (angle, len, width, color, ctx) {
-          ctx.save()
-          ctx.translate(150, 150) //把坐标轴的远点平移到原来的中心
-          ctx.rotate(-Math.PI / 2 + angle)  //旋转坐标轴。 x轴就是针的角度
-          ctx.beginPath()
-          ctx.moveTo(-4, 0)
-          ctx.lineTo(len, 0) // 沿着x轴绘制针
-          ctx.lineWidth = width
-          ctx.strokeStyle = color
-          ctx.lineCap = "round"
-          ctx.stroke()
-          ctx.closePath()
-          ctx.restore()
+        ctx.save()
+        ctx.translate(150, 150) // 把坐标轴的远点平移到原来的中心
+        ctx.rotate(-Math.PI / 2 + angle) // 旋转坐标轴。 x轴就是针的角度
+        ctx.beginPath()
+        ctx.moveTo(-4, 0)
+        ctx.lineTo(len, 0) // 沿着x轴绘制针
+        ctx.lineWidth = width
+        ctx.strokeStyle = color
+        ctx.lineCap = "round"
+        ctx.stroke()
+        ctx.closePath()
+        ctx.restore()
       }
         
       /*绘制表盘*/
       function drawDial (ctx) {
         let pi = Math.PI
       
-        ctx.clearRect(0, 0, 300, 300) //清除所有内容
-        ctx.save()
-      
-        ctx.translate(150, 150) //一定坐标原点到原来的中心
+        ctx.save() // 保存初始画布时的状态
         ctx.beginPath()
-        ctx.arc(0, 0, 148, 0, 2 * pi) //绘制圆周
-        ctx.stroke()
+        ctx.translate(150, 150) // 一定坐标原点到原来的中心
+        ctx.arc(0, 0, 148, 0, 2 * pi) // 绘制圆周
         ctx.closePath()
-      
-        for (let i = 0; i < 60; i++) {//绘制刻度。
-          ctx.save()
-          ctx.rotate(-pi / 2 + i * pi / 30) //旋转坐标轴。坐标轴x的正方形从 向上开始算起
+        ctx.stroke()
+
+        // 绘制刻度
+        for (let i = 0; i < 60; i++) {
+          ctx.save() // 保存以上的状态
           ctx.beginPath()
-          ctx.moveTo(110, 0)
-          ctx.lineTo(140, 0)
+          ctx.rotate(pi * 2 / 60 * i) // 旋转坐标轴。坐标轴x的正方形从 向上开始算起
+          if (i % 5) {
+            ctx.moveTo(146, 0)
+            ctx.lineTo(140, 0)
+          } else {
+            ctx.moveTo(146, 0)
+            ctx.lineTo(130, 0)
+          }
           ctx.lineWidth = i % 5 ? 2 : 4
           ctx.strokeStyle = i % 5 ? "blue" : "red"
-          ctx.stroke()
           ctx.closePath()
+          ctx.stroke()
           ctx.restore()
         }
+
+        // 绘制数字
+        ctx.beginPath()
+        ctx.font = "30px fangsong"
+        ctx.textAlign = "center"
+        ctx.textBaseline = "middle"
+        ctx.fillStyle = "black"
+        for (let j = 1; j <= 12; j++) {
+          ctx.fillText(
+            j,
+            Math.cos((j - 3) * (Math.PI / 6)) * 108,
+            Math.sin((j - 3) * (Math.PI / 6)) * 108,
+          )
+        }
+
         ctx.restore()
       }
     </script>
