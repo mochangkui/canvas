@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #canvas {
+      border: solid 1px gray;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="500" height="500"></canvas>
+
+  <script>
+    const canvas = document.getElementById('canvas')
+    const ctx = canvas.getContext('2d')
+
+    let isEatFoot = false
+
+    // 矩形类
+    class Rect {
+      constructor (x, y, width, height, color) {
+        this.x = x
+        this.y = y
+        this.width = width
+        this.height = height
+        this.color = color
+      }
+      draw () {
+        ctx.beginPath()
+        ctx.fillStyle = this.color
+        ctx.fillRect(this.x, this.y, this.width, this.height)
+        ctx.strokeRect(this.x, this.y, this.width, this.height)
+      }
+    }
+
+    // 蛇类
+    class Snake {
+      constructor () {
+        this.head = new Rect(canvas.width / 2 - 10, canvas.height / 2 - 10, 20, 20, 'red')
+        this.body = new Array()
+        let x = this.head.x - 20
+        let y = this.head.y
+        for (let i = 0; i < 3; i++) {
+          let rect = new Rect(x, y, 20, 20, 'gray')
+          this.body.push(rect)
+          x -= 20
+        }
+        this.direction = 'right'
+      }
+      // 画舌头画蛇身
+      draw () {
+        this.head.draw()
+        for (let i = 0; i < this.body.length; i++) {
+          this.body[i].draw()
+        }
+      }
+
+      // 移动
+      move () {
+        let rect = new Rect(this.head.x, this.head.y, this.head.width, this.head.height, 'gray')
+        this.body.splice(0, 0, rect)
+        if (isEatFoot == false) {
+          this.body.pop()
+        } else {
+          isEatFoot = false
+        }
+
+        switch (this.direction) {
+          case 'left':
+            this.head.x -= this.head.width
+            break
+          case 'up':
+            this.head.y -= this.head.height
+            break
+          case 'right':
+            this.head.x += this.head.width
+            break
+          case 'down':
+            this.head.y += this.head.height
+            break
+        }
+      }
+
+      // 随机投放食物
+      randForFood () {
+        let isInSnake = true
+        let rect = null
+        while (isInSnake) {
+          let x = this.getRandInRange(0, (canvas.width - 20) / 25) * 20
+          let y = this.getRandInRange(0, (canvas.height - 20) / 25) * 20
+          rect = new Rect(x, y, 20, 20, 'blue')
+          // 判断食物是否与蛇头重叠
+          if (this.isRectHit(snake.head, rect)) {
+            isInSnake = true
+            continue
+          }
+          isInSnake = false
+
+          // 判断食物是否与蛇身重叠
+          for (let i = 0; i < snake.body.length; i++) {
+            if (this.isRectHit(snake.body[i], rect)) {
+              isInSnake = true
+              break
+            }
+          }
+        }
+
+        return rect
+      }
+
+      // 生成随机数
+      getRandInRange (min, max) {
+        return Math.round(Math.random() * (max - min) + min)
+      }
+
+      // 碰撞检测
+      isRectHit (rect1, rect2) {
+        let minX1 = rect1.x
+        let minY1 = rect1.y
+        let minX2 = rect2.x
+        let minY2 = rect2.y
+
+        let maxX1 = rect1.x + rect2.width
+        let maxY1 = rect1.y + rect2.width
+        let maxX2 = rect2.x + rect1.height
+        let maxY2 = rect2.y + rect2.height
+
+        // 判断矩形相交的最大/最小值
+        let minX = Math.max(minX1, minX2)
+        let minY = Math.max(minY1, minY2)
+        let maxX = Math.min(maxX1, maxX2)
+        let maxY = Math.min(maxY1, maxY2)
+
+        if (minX < maxX && minY < maxY) {
+          return true
+        } else {
+          return false
+        }
+      }
+    }
+
+    const snake = new Snake()
+    let foot = snake.randForFood()
+
+    document.onkeydown = (event) => {
+      let e = event || window.event
+      switch (e.keyCode) {
+        case 37:
+          // left
+          snake.direction = 'left'
+          break
+        case 38:
+          // up
+          snake.direction = 'up'
+          break
+        case 39:
+          // right
+          snake.direction = 'right'
+          break
+        case 40:
+          // down
+          snake.direction = 'down'
+          break
+      }
+    }
+
+    setInterval(() => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      snake.draw()
+      foot.draw()
+      snake.move()
+
+      if (snake.isRectHit(snake.head, foot)) {
+        console.log('吃到了')
+        isEatFoot = true
+        foot = snake.randForFood()
+      }
+    }, 500)
+
+  </script>
+</body>
+</html>
