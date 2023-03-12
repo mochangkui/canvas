@@ -5,33 +5,37 @@
     <meta charset="utf-8" />
   </head>
   <body>
-    <canvas id="canvas" width="300" height="300" style="border:1px solid silver;"></canvas>
+    <canvas id="canvas" width="500" height="500" style="border:1px solid silver;"></canvas>
 
     <script type="text/javascript">
-      function draw(){
-        var canvas = document.getElementById('canvas')
-        if (!canvas.getContext) return
-        var ctx = canvas.getContext("2d")
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
-        
-        let time = new Date()
-        let second = time.getSeconds()
-        let milliseconds = time.getMilliseconds()
+      var canvas = document.getElementById('canvas')
+      var ctx = canvas.getContext("2d")
+      const distance = 20
+      
+      function gridlines () {
+        const lines = canvas.height / distance
+        for (let i = 1; i <= lines - 1; i++) {
+          // 横线
+          ctx.beginPath()
+          ctx.moveTo(0, distance * i)
+          ctx.lineTo(canvas.width, distance * i)
+          ctx.lineWidth = 0.1
+          ctx.strokeStyle = 'red'
+          ctx.stroke()
+          ctx.closePath()
 
-        ctx.save()
-        ctx.fillStyle = "red"
-        ctx.translate(100, 100)
-        ctx.rotate(((Math.PI * 2) / 60) * second + ((Math.PI * 2) / 60 / 1000) * milliseconds)
-        ctx.fillRect(0, 0, 50, 50)
-
-        ctx.translate(50, 50)
-        ctx.rotate(((Math.PI * 2) / 10) * second + ((Math.PI * 2) / 10 / 1000) * milliseconds)
-        ctx.fillRect(0, 0, 40, 40)
-        ctx.restore()
-
-        requestAnimationFrame(draw)
+          // 竖线
+          ctx.beginPath()
+          ctx.moveTo(distance * i, 0)
+          ctx.lineTo(distance * i, canvas.width)
+          ctx.lineWidth = 0.1
+          ctx.strokeStyle = 'red'
+          ctx.stroke()
+          ctx.closePath()
+        }
       }
-      draw();
+
+      gridlines()
     </script>
   </body>
 </html>
